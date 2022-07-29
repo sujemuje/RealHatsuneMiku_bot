@@ -12,23 +12,7 @@ client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
 
 
-@tree.command(
-    name='miejsca_zerowe',
-    description='Oblicza miejsca zerowe trójmianu kwadratowego i je wypisuje jeśli istnieją w R'
-)
-async def __command_miejsca_zerowe(
-        interaction: discord.Interaction,
-        a: float, b: float, c: float
-) -> None:
-    delta = b**2 - 4*a*c
-    if delta < 0:
-        await interaction.response.send_message("Brak miejsc zerowych w R")
-    elif delta == 0:
-        await interaction.response.send_message(f'{b / (2*a)}')
-    else:
-        await interaction.response.send_message(
-            f'{(b + sqrt(delta)) / (2*a)}, {(b - sqrt(delta)) / (2*a)}'
-        )
+# DODAJ/ZABIERZ ROLE
 
 
 @tree.command(
@@ -55,6 +39,9 @@ async def __command_zabierz_role(
 ) -> None:
     await member.remove_roles(role)
     await interaction.response.send_message('zabrano')
+
+
+# OBSŁUGA CZŁONKÓW SERWERA
 
 
 @tree.command(
@@ -99,6 +86,9 @@ async def __command_dm_me(
     await member.send(msg)
 
 
+# MINIGRA
+
+
 @tree.command(
     name='typing_speedrun',
     description='Gra w jak najszybsze przepisanie wylosowanego ciągu znaków'
@@ -131,6 +121,9 @@ async def __command_typing_speedrun(
     await interaction.edit_original_message(content=f'Gratulacje, przepisałeś: `{string}` w {15.0 - time_limit} sekund!')
 
 
+# OBSŁUGA KANAŁÓW GŁOSOWYCH
+
+
 async def __join(interaction: discord.Interaction) -> None:
     if isinstance(interaction.user, discord.User):
         await interaction.response.send_message('Do użycia tylko na serwerach')
@@ -140,12 +133,15 @@ async def __join(interaction: discord.Interaction) -> None:
         return
     if interaction.guild.voice_client is None:
         await interaction.user.voice.channel.connect()
-    else:
+        await interaction.response.send_message(
+            f'Połączono z kanałem {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
+        )
+        return
+    if interaction.guild.voice_client.channel is not interaction.user.voice.channel:
         await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
-
-    await interaction.response.send_message(
-        f'Połączono z kanałem {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
-    )
+        await interaction.response.send_message(
+            f'Przełączono na kanał {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
+        )
 
 
 @tree.command(
@@ -160,7 +156,7 @@ async def __command_join(
 
 @tree.command(
     name='play',
-    description='Odtwarza hymn Hatsune Miku'
+    description='Odtwarza wybrane utwory'
 )
 async def __command_play(
         interaction: discord.Interaction
