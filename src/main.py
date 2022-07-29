@@ -174,12 +174,18 @@ async def __command_play(
     play_in_loop()
 
 
+# ON READY
+
+
 @client.event
 async def on_ready():
     game = discord.Game("with deez nuts")
     await client.change_presence(status=discord.Status.idle, activity=game)
     print('ready')
     await tree.sync()
+
+
+# SIMPLE ON_TYPE/MESSAGE/REACTION EVENTS
 
 
 @client.event
