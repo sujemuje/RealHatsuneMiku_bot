@@ -154,6 +154,28 @@ async def __command_join(
     await __join(interaction)
 
 
+loop = False
+
+
+@tree.command(
+    name='loop',
+    description='Włącza/wyłącza zapętlenie utworów'
+)
+async def __command_loop(
+        interaction: discord.Interaction
+) -> None:
+    global loop
+    response_info: str
+
+    if loop:
+        loop = False
+        response_info = 'wyłączone'
+    else:
+        loop = True
+        response_info = 'włączone'
+    await interaction.response.send_message(f'Zapętlenie utworów {response_info}')
+
+
 @tree.command(
     name='play',
     description='Odtwarza wybrane utwory'
@@ -164,14 +186,14 @@ async def __command_play(
     await __join(interaction)
 
     vc = interaction.guild.voice_client
-    loop = True
+    global loop
+    audio = discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3")
 
     def play_in_loop(*args, **kwargs):
         if loop:
-            audio = discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3")
             vc.play(audio, after=play_in_loop)
 
-    play_in_loop()
+    vc.play(audio, after=play_in_loop)
 
 
 # ON READY
