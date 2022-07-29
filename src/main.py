@@ -167,8 +167,15 @@ async def __command_play(
 ) -> None:
     await __join(interaction)
 
-    source = discord.FFmpegOpusAudio(source='./audio/HM.opus')
-    interaction.guild.voice_client.play(source)
+    vc = interaction.guild.voice_client
+    loop = True
+
+    def play_in_loop(*args, **kwargs):
+        if loop:
+            audio = discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3")
+            vc.play(audio, after=play_in_loop)
+
+    play_in_loop()
 
 
 @client.event
