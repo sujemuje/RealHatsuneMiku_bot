@@ -5,7 +5,7 @@ import os
 
 TOKEN = os.environ['TOKEN']
 
-ffmpeg_path = 'C:/Users/mateu/Desktop/Homework/ffmpeg-n5.1-latest-win64-gpl-5.1/bin'
+ffmpeg_path = 'FFMPEG'
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
