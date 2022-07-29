@@ -131,34 +131,7 @@ async def __command_typing_speedrun(
     await interaction.edit_original_message(content=f'Gratulacje, przepisałeś: `{string}` w {15.0 - time_limit} sekund!')
 
 
-@tree.command(
-    name='vc_connect',
-    description='Łączy się z kanałem głosowym'
-)
-async def __command_vc_connect(
-        interaction: discord.Interaction
-) -> None:
-    connected = False
-    for vc_channel in interaction.guild.voice_channels:
-        for member in vc_channel.members:
-            if member == interaction.user:
-                connected = True
-                await vc_channel.connect()  # tu sie chyba tworzy voiceclient
-                await interaction.response.send_message(
-                    f'Połączono z kanałem {vc_channel.mention} na prośbę użytkownika {member.mention}')
-                break
-        if connected: break
-    else:
-        await interaction.response.send_message(f'Nie udało się połączyć z kanałem głosowym')
-
-
-@tree.command(
-    name='play',
-    description='Odtwarza hymn Hatsune Miku'
-)
-async def __command_play(
-        interaction: discord.Interaction
-) -> None:
+async def __join(interaction: discord.Interaction) -> None:
     if isinstance(interaction.user, discord.User):
         await interaction.response.send_message('Do użycia tylko na serwerach')
         return
@@ -173,6 +146,26 @@ async def __command_play(
     await interaction.response.send_message(
         f'Połączono z kanałem {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
     )
+
+
+@tree.command(
+    name='join',
+    description='Łączy się z kanałem głosowym'
+)
+async def __command_join(
+        interaction: discord.Interaction
+) -> None:
+    await __join(interaction)
+
+
+@tree.command(
+    name='play',
+    description='Odtwarza hymn Hatsune Miku'
+)
+async def __command_play(
+        interaction: discord.Interaction
+) -> None:
+    await __join(interaction)
 
     source = discord.FFmpegOpusAudio(source='./audio/HM.opus')
     interaction.guild.voice_client.play(source)
