@@ -19,12 +19,20 @@ voice_commands.init(tree)
 # DODAJ/ZABIERZ ROLE
 
 
-class Questionnaire(discord.ui.Modal, title='Questionnaire Response'):
-    name = discord.ui.TextInput(label='Name')
-    answer = discord.ui.TextInput(label='Answer', style=discord.TextStyle.paragraph)
+class View(discord.ui.View):
+    def __init__(self, button: discord.ui.Button):
+        super().__init__()
+        self.add_item(button)
 
-    async def on_submit(self, interaction: discord.Interaction):
-        await interaction.response.send_message(f'Thanks for your response, {self.name}!', ephemeral=True)
+
+class Button(discord.ui.Button):
+    def __init__(self, *args, **kwargs):
+        self.interaction = kwargs.pop('interaction')
+        super().__init__(*args, **kwargs)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message('k')
+        await self.interaction.edit_original_message(content='sda', view=None)
 
 
 @tree.command(
@@ -34,8 +42,10 @@ class Questionnaire(discord.ui.Modal, title='Questionnaire Response'):
 async def __command_test(
         interaction: discord.Interaction
 ) -> None:
-    modal = Questionnaire()
-    await interaction.response.send_modal(modal)
+    button = Button(label='k', style=discord.ButtonStyle.green, interaction=interaction)
+    view = View(button)
+    await interaction.response.send_message(view=view)
+    view.remove_item(button)
 
 
 @tree.command(
