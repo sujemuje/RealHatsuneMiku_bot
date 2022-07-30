@@ -1,4 +1,5 @@
 import discord
+import voice_commands
 from math import sqrt
 import time
 import os
@@ -10,6 +11,10 @@ ffmpeg_path = 'FFMPEG'
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
+loop = False
+
+
+tree.add_command(voice_commands.__command_join)
 
 
 # DODAJ/ZABIERZ ROLE
@@ -124,43 +129,6 @@ async def __command_typing_speedrun(
 # OBSŁUGA KANAŁÓW GŁOSOWYCH
 
 
-async def __join(interaction: discord.Interaction) -> None:
-
-    if isinstance(interaction.user, discord.User):
-        await interaction.response.send_message('Do użycia tylko na serwerach')
-        return
-
-    if interaction.user.voice is None:
-        await interaction.response.send_message('Nie jesteś połączony z kanałem głosowym')
-        return
-
-    if interaction.guild.voice_client is None:
-        await interaction.response.send_message(
-            f'Połączono z kanałem {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
-        )
-        await interaction.user.voice.channel.connect()
-        return
-
-    if interaction.guild.voice_client.channel is not interaction.user.voice.channel:
-        await interaction.response.send_message(
-            f'Przełączono na kanał {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
-        )
-        await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
-
-
-@tree.command(
-    name='join',
-    description='Łączy się z kanałem głosowym'
-)
-async def __command_join(
-        interaction: discord.Interaction
-) -> None:
-    await __join(interaction)
-
-
-loop = False
-
-
 @tree.command(
     name='loop',
     description='Włącza/wyłącza zapętlenie utworów'
@@ -184,14 +152,14 @@ async def __command_loop(
 async def __command_play(
         interaction: discord.Interaction
 ) -> None:
-    await __join(interaction)
+    await voice_commands.__join(interaction)
 
     vc = interaction.guild.voice_client
     global loop
 
     def play_in_loop(first=False):
         if loop or first:
-            vc.play(discord.FFmpegOpusAudio("./audio/music.opus"), after=play_in_loop)
+            vc.play(discord.FFmpegOpusAudio("./audio/HM.opus"), after=play_in_loop)
 
     play_in_loop(first=True)
 
