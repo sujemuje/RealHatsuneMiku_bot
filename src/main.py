@@ -125,23 +125,27 @@ async def __command_typing_speedrun(
 
 
 async def __join(interaction: discord.Interaction) -> None:
+
     if isinstance(interaction.user, discord.User):
         await interaction.response.send_message('Do użycia tylko na serwerach')
         return
+
     if interaction.user.voice is None:
         await interaction.response.send_message('Nie jesteś połączony z kanałem głosowym')
         return
+
     if interaction.guild.voice_client is None:
-        await interaction.user.voice.channel.connect()
         await interaction.response.send_message(
             f'Połączono z kanałem {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
         )
+        await interaction.user.voice.channel.connect()
         return
+
     if interaction.guild.voice_client.channel is not interaction.user.voice.channel:
-        await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
         await interaction.response.send_message(
             f'Przełączono na kanał {interaction.user.voice.channel.mention} na prośbę użytkownika {interaction.user.mention}'
         )
+        await interaction.guild.voice_client.move_to(interaction.user.voice.channel)
 
 
 @tree.command(
@@ -187,13 +191,13 @@ async def __command_play(
 
     vc = interaction.guild.voice_client
     global loop
-    audio = discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3")
+    audio = discord.FFmpegOpusAudio("./audio/music.opus")
 
     def play_in_loop(*args, **kwargs):
         if loop:
             vc.play(audio, after=play_in_loop)
 
-    vc.play(audio, after=play_in_loop)
+    play_in_loop()
 
 
 # ON READY
