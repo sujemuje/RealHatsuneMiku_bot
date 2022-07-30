@@ -3,9 +3,9 @@ import voice_commands
 import typing_speedrun
 import os
 
+
 TOKEN = os.environ['TOKEN']
 
-ffmpeg_path = 'FFMPEG'
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)

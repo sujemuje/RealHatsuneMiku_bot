@@ -1,8 +1,13 @@
 import discord
 
 
+AUDIO = 'AUDIO'
+
+
+loop = False
+
+
 def init(tree):
-    loop = False
 
     async def __join(interaction: discord.Interaction) -> None:
 
@@ -31,7 +36,6 @@ def init(tree):
                 'Bot jest już na kanale'
             )
 
-
     @tree.command(
         name='join',
         description='Łączy się z kanałem głosowym'
@@ -40,7 +44,6 @@ def init(tree):
             interaction: discord.Interaction
     ) -> None:
         await __join(interaction)
-
 
     @tree.command(
         name='loop',
@@ -57,7 +60,6 @@ def init(tree):
         else:
             await interaction.response.send_message(f'Zapętlenie utworów wyłączone')
 
-
     @tree.command(
         name='play',
         description='Odtwarza wybrane utwory'
@@ -72,6 +74,6 @@ def init(tree):
 
         def play_in_loop(first=False):
             if loop or first:
-                vc.play(discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3"), after=play_in_loop)
+                vc.play(discord.FFmpegPCMAudio(AUDIO), after=play_in_loop)
 
         play_in_loop(first=True)
