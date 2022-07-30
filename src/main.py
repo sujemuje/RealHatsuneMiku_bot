@@ -19,6 +19,25 @@ voice_commands.init(tree)
 # DODAJ/ZABIERZ ROLE
 
 
+class Questionnaire(discord.ui.Modal, title='Questionnaire Response'):
+    name = discord.ui.TextInput(label='Name')
+    answer = discord.ui.TextInput(label='Answer', style=discord.TextStyle.paragraph)
+
+    async def on_submit(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'Thanks for your response, {self.name}!', ephemeral=True)
+
+
+@tree.command(
+    name='test',
+    description='test UI'
+)
+async def __command_test(
+        interaction: discord.Interaction
+) -> None:
+    modal = Questionnaire()
+    await interaction.response.send_modal(modal)
+
+
 @tree.command(
     name='dodaj_role',
     description='Dodaje role użytkownikowi'
