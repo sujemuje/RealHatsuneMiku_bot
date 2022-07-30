@@ -1,8 +1,6 @@
 import discord
 import voice_commands
 import typing_speedrun
-from math import sqrt
-import time
 import os
 
 TOKEN = os.environ['TOKEN']
@@ -15,11 +13,7 @@ tree = discord.app_commands.CommandTree(client=client)
 
 
 typing_speedrun.init(tree, client)
-
-
-tree.add_command(voice_commands.__command_join)
-tree.add_command(voice_commands.__command_play)
-tree.add_command(voice_commands.__command_loop)
+voice_commands.init(tree)
 
 
 # DODAJ/ZABIERZ ROLE
