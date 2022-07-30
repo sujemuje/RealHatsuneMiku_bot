@@ -11,10 +11,11 @@ ffmpeg_path = 'FFMPEG'
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
-loop = False
 
 
 tree.add_command(voice_commands.__command_join)
+tree.add_command(voice_commands.__command_play)
+tree.add_command(voice_commands.__command_loop)
 
 
 # DODAJ/ZABIERZ ROLE
@@ -87,7 +88,7 @@ async def __command_dm_me(
         member: discord.Member,
         msg: str
 ) -> None:
-    await interaction.user.send("egg")
+    await interaction.response.send_message('Wiadomość dostarczona pomyślnie', ephemeral=True)
     await member.send(msg)
 
 
@@ -124,44 +125,6 @@ async def __command_typing_speedrun(
     time_delta = TIME_E - TIME_S
     time_limit -= time_delta
     await interaction.edit_original_message(content=f'Gratulacje, przepisałeś: `{string}` w {15.0 - time_limit} sekund!')
-
-
-# OBSŁUGA KANAŁÓW GŁOSOWYCH
-
-
-@tree.command(
-    name='loop',
-    description='Włącza/wyłącza zapętlenie utworów'
-)
-async def __command_loop(
-        interaction: discord.Interaction
-) -> None:
-    global loop
-    loop = not loop
-
-    if loop:
-        await interaction.response.send_message(f'Zapętlenie utworów włączone')
-    else:
-        await interaction.response.send_message(f'Zapętlenie utworów wyłączone')
-
-
-@tree.command(
-    name='play',
-    description='Odtwarza wybrane utwory'
-)
-async def __command_play(
-        interaction: discord.Interaction
-) -> None:
-    await voice_commands.__join(interaction)
-
-    vc = interaction.guild.voice_client
-    global loop
-
-    def play_in_loop(first=False):
-        if loop or first:
-            vc.play(discord.FFmpegOpusAudio("./audio/HM.opus"), after=play_in_loop)
-
-    play_in_loop(first=True)
 
 
 # ON READY

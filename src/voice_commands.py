@@ -1,6 +1,9 @@
 import discord
 
 
+loop = False
+
+
 async def __join(interaction: discord.Interaction) -> None:
 
     if isinstance(interaction.user, discord.User):
@@ -37,3 +40,38 @@ async def __command_join(
         interaction: discord.Interaction
 ) -> None:
     await __join(interaction)
+
+
+@discord.app_commands.command(
+    name='loop',
+    description='Włącza/wyłącza zapętlenie utworów'
+)
+async def __command_loop(
+        interaction: discord.Interaction
+) -> None:
+    global loop
+    loop = not loop
+
+    if loop:
+        await interaction.response.send_message(f'Zapętlenie utworów włączone')
+    else:
+        await interaction.response.send_message(f'Zapętlenie utworów wyłączone')
+
+
+@discord.app_commands.command(
+    name='play',
+    description='Odtwarza wybrane utwory'
+)
+async def __command_play(
+        interaction: discord.Interaction
+) -> None:
+    await __join(interaction)
+
+    vc = interaction.guild.voice_client
+    global loop
+
+    def play_in_loop(first=False):
+        if loop or first:
+            vc.play(discord.FFmpegOpusAudio("./audio/HM.opus"), after=play_in_loop)
+
+    play_in_loop(first=True)
