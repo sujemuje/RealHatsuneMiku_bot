@@ -169,15 +169,12 @@ async def __command_loop(
         interaction: discord.Interaction
 ) -> None:
     global loop
-    response_info: str
+    loop = not loop
 
     if loop:
-        loop = False
-        response_info = 'wyłączone'
+        await interaction.response.send_message(f'Zapętlenie utworów włączone')
     else:
-        loop = True
-        response_info = 'włączone'
-    await interaction.response.send_message(f'Zapętlenie utworów {response_info}')
+        await interaction.response.send_message(f'Zapętlenie utworów wyłączone')
 
 
 @tree.command(
@@ -191,13 +188,12 @@ async def __command_play(
 
     vc = interaction.guild.voice_client
     global loop
-    audio = discord.FFmpegOpusAudio("./audio/music.opus")
 
-    def play_in_loop(*args, **kwargs):
-        if loop:
-            vc.play(audio, after=play_in_loop)
+    def play_in_loop(first=False):
+        if loop or first:
+            vc.play(discord.FFmpegOpusAudio("./audio/music.opus"), after=play_in_loop)
 
-    play_in_loop()
+    play_in_loop(first=True)
 
 
 # ON READY
