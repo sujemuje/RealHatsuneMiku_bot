@@ -72,6 +72,6 @@ async def __command_play(
 
     def play_in_loop(first=False):
         if loop or first:
-            vc.play(discord.FFmpegOpusAudio("./audio/HM.opus"), after=play_in_loop)
+            vc.play(discord.FFmpegPCMAudio("./audio/Plastic Memories ED.mp3"), after=play_in_loop)
 
     play_in_loop(first=True)
