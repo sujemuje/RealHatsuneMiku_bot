@@ -1,7 +1,8 @@
 import discord
+import os
 
 
-AUDIO = 'AUDIO'
+AUDIO = os.environ['AUDIO']
 
 
 loop = False
@@ -74,6 +75,7 @@ def init(tree):
 
         def play_in_loop(first=False):
             if loop or first:
-                vc.play(discord.FFmpegPCMAudio(AUDIO), after=play_in_loop)
+                print('lol')
+                vc.play(discord.FFmpegOpusAudio(AUDIO), after=play_in_loop)
 
         play_in_loop(first=True)
