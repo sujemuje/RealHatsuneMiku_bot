@@ -4,18 +4,18 @@ import discord
 def init(tree):
     result: float = 0
     operation: str = ''
+    recent: int = 0
 
     class CalculatorButton(discord.ui.Button):
         def __init__(self, value, *args, **kwargs):
-            self.value = value
+            self.value: int = value
             super().__init__(*args, **kwargs)
 
         async def callback(self, interaction: discord.Interaction):
             result = self.value
-            for child in self.view.children:
-                if child.style == discord.ButtonStyle.green:
-                    child.style = discord.ButtonStyle.gray
-                    break
+            self.view.children[recent].style = discord.ButtonStyle.gray
+            # recent = self.value """cos sie przez to jebie"""
+
             self.style = discord.ButtonStyle.green
             await interaction.response.edit_message(content=result, view = self.view)
 
