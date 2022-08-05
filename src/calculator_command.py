@@ -1,29 +1,33 @@
 import discord
 
 
-def init(tree):
-    result: float = 0
-    operation: str = ''
-    recent: int = 0
+result: float = 0
+operation: str = ''
+recent: int = 0
 
+
+def init(tree):
     class CalculatorButton(discord.ui.Button):
         def __init__(self, value, *args, **kwargs):
             self.value: int = value
             super().__init__(*args, **kwargs)
-            global recent
 
         async def callback(self, interaction: discord.Interaction):
-            result = self.value
-            # self.view.children[recent].style = discord.ButtonStyle.gray
-            # recent = self.value"""cos sie przez to jebie, chyba klasy nie moga modyfikowac zmiennych z zewnatrz???"""
-            """Inna metoda"""
+            global recent
+            self.view.children[recent].style = discord.ButtonStyle.gray
+            recent = self.value - 1
+
+            """Inna metoda
             for child in self.view.children:
                 if child.style == discord.ButtonStyle.green:
                     child.style = discord.ButtonStyle.gray
                     break
-            """ """
+            """
+
             self.style = discord.ButtonStyle.green
-            await interaction.response.edit_message(content=result, view = self.view)
+            global result
+            result = self.value
+            await interaction.response.edit_message(content=result, view=self.view)
 
     class CalculatorView(discord.ui.View):
         """Reprezentacja kalkulatora za pomocą przycisków pod wiadomością, WIP
