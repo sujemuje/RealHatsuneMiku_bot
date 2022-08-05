@@ -76,6 +76,6 @@ def init(tree):
         def play_in_loop(first=False):
             if loop or first:
                 print('lol')
-                vc.play(discord.FFmpegOpusAudio(AUDIO), after=play_in_loop)
+                vc.play(discord.FFmpegPCMAudio(AUDIO), after=play_in_loop)
 
         play_in_loop(first=True)
