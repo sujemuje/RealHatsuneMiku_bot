@@ -10,12 +10,18 @@ def init(tree):
         def __init__(self, value, *args, **kwargs):
             self.value: int = value
             super().__init__(*args, **kwargs)
+            global recent
 
         async def callback(self, interaction: discord.Interaction):
             result = self.value
-            self.view.children[recent].style = discord.ButtonStyle.gray
-            # recent = self.value """cos sie przez to jebie"""
-
+            # self.view.children[recent].style = discord.ButtonStyle.gray
+            # recent = self.value"""cos sie przez to jebie, chyba klasy nie moga modyfikowac zmiennych z zewnatrz???"""
+            """Inna metoda"""
+            for child in self.view.children:
+                if child.style == discord.ButtonStyle.green:
+                    child.style = discord.ButtonStyle.gray
+                    break
+            """ """
             self.style = discord.ButtonStyle.green
             await interaction.response.edit_message(content=result, view = self.view)
 
