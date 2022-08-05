@@ -1,4 +1,5 @@
 import discord
+import custom_client
 import voice_commands
 import typing_speedrun
 import calculator_command
@@ -9,7 +10,7 @@ TOKEN = os.environ['TOKEN']
 
 
 intents = discord.Intents.all()
-client = discord.Client(intents=intents)
+client = custom_client.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
 
 
