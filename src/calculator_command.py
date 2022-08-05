@@ -2,16 +2,22 @@ import discord
 
 
 def init(tree):
-    result: float = 0.0
+    result: float = 0
     operation: str = ''
 
     class CalculatorButton(discord.ui.Button):
         def __init__(self, value, *args, **kwargs):
             self.value = value
-            super().__init__(label=str(value), *args, **kwargs)
+            super().__init__(*args, **kwargs)
 
         async def callback(self, interaction: discord.Interaction):
-            await interaction.response.edit_message(content=self.value)
+            result = self.value
+            for child in self.view.children:
+                if child.style == discord.ButtonStyle.green:
+                    child.style = discord.ButtonStyle.gray
+                    break
+            self.style = discord.ButtonStyle.green
+            await interaction.response.edit_message(content=result, view = self.view)
 
     class CalculatorView(discord.ui.View):
         """Reprezentacja kalkulatora za pomocą przycisków pod wiadomością, WIP
@@ -20,11 +26,14 @@ def init(tree):
 
         def __init__(self):
             super().__init__()
-            global result
-            global operation
             for y in range(3):
                 for x in range(3):
-                    self.add_item(CalculatorButton(value=(3 * y + x + 1), row=y))
+                    self.add_item(CalculatorButton(
+                        value=(3 * y + x + 1),
+                        label=str(3 * y + x + 1),
+                        row=y,
+                        style=discord.ButtonStyle.gray)
+                    )
 
     @tree.command(
         name='kalkulator',
@@ -34,4 +43,4 @@ def init(tree):
             interaction: discord.Interaction
     ) -> None:
         view = CalculatorView()
-        await interaction.response.send_message(content='0', view=view)
+        await interaction.response.send_message(content=result, view=view)
