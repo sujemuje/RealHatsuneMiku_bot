@@ -3,6 +3,7 @@ import custom_client
 import voice_commands
 import typing_speedrun
 import calculator_command
+import role
 import os
 
 
@@ -12,14 +13,18 @@ TOKEN = os.environ['TOKEN']
 intents = discord.Intents.all()
 client = custom_client.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
+tree.add_command(role.group_role)
 
+
+# INITS
 
 typing_speedrun.init(tree, client)
 voice_commands.init(tree)
 calculator_command.init(tree)
 
 
-# VIEW COMMANDS
+# VIEW TEST
+
 
 class MyButton(discord.ui.Button):
     def __init__(self, *args, **kwargs):
@@ -50,32 +55,6 @@ async def __command_test(
     await interaction.response.send_message(content=f'{view.var}', view=view)
 
 
-@tree.command(
-    name='dodaj_role',
-    description='Dodaje role użytkownikowi'
-)
-async def __command_dodaj_role(
-        interaction: discord.Interaction,
-        member: discord.Member,
-        role: discord.Role
-) -> None:
-    await member.add_roles(role)
-    await interaction.response.send_message('dodano')
-
-
-@tree.command(
-    name='zabierz_role',
-    description='Zabiera role użytkownikowi'
-)
-async def __command_zabierz_role(
-        interaction: discord.Interaction,
-        member: discord.Member,
-        role: discord.Role
-) -> None:
-    await member.remove_roles(role)
-    await interaction.response.send_message('zabrano')
-
-
 # OBSŁUGA CZŁONKÓW SERWERA
 
 
@@ -94,7 +73,7 @@ async def __command_wypisz_aktywnych(
 
 
 @tree.command(
-    name='zmien_pseudonim',
+    name='pseudonim',
     description='Zmienia pseudonim wybranego użytkownika'
 )
 async def __command_zmien_pseudonim(

@@ -3,6 +3,7 @@ import time
 
 
 def init(tree, client):
+
     @tree.command(
         name='typing_speedrun',
         description='Gra w jak najszybsze przepisanie wylosowanego ciągu znaków'
@@ -32,4 +33,6 @@ def init(tree, client):
 
         time_delta = TIME_E - TIME_S
         time_limit -= time_delta
-        await interaction.edit_original_message(content=f'Gratulacje, przepisałeś: `{string}` w {15.0 - time_limit} sekund!')
+        await interaction.edit_original_message(
+            content=f'Gratulacje, przepisałeś: `{string}` w {15.0 - time_limit} sekund!'
+        )
