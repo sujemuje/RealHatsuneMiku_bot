@@ -1,13 +1,16 @@
+import os
 import discord
 import custom_client
+# COMMAND IMPORTS
+import poll_command
 import voice_commands
 import typing_speedrun
 import calculator_command
+# COMMAND TREE IMPORTS
 import role
-import os
 
 
-TOKEN = os.environ['TOKEN']
+# CLIENT AND COMMAND TREE
 
 
 intents = discord.Intents.all()
@@ -18,44 +21,16 @@ tree.add_command(role.group_role)
 
 # INITS
 
+poll_command.init(tree)
 typing_speedrun.init(tree, client)
 voice_commands.init(tree)
 calculator_command.init(tree)
 
 
-# VIEW TEST
+# TESTS
 
 
-class MyButton(discord.ui.Button):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class MyView(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.var = 69
-        self.add_item(MyButton(label='a'))
-        self.add_item(MyButton(label='b'))
-
-    async def on_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-        button.label = 'kj'
-        self.var = 420
-        await interaction.response.edit_message(content=f'{self.var}', view=self)
-
-
-@tree.command(
-    name='test',
-    description='test UI'
-)
-async def __command_test(
-        interaction: discord.Interaction
-) -> None:
-    view = MyView()
-    await interaction.response.send_message(content=f'{view.var}', view=view)
-
-
-# OBSŁUGA CZŁONKÓW SERWERA
+# GUILD MEMBERS MANAGEMENT
 
 
 @tree.command(
@@ -140,4 +115,5 @@ async def on_raw_reaction_remove(payload: discord.RawReactionActionEvent):
     await message.remove_reaction(payload.emoji, client.user)
 
 
+TOKEN = os.environ['TOKEN']
 client.run(TOKEN)

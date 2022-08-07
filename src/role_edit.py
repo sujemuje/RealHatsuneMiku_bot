@@ -21,6 +21,7 @@ async def __command_name(
 
 
 colors = {
+    # SAMPLE COLORS' NAMES
     'red': 0xff0000,
     'green': 0x00ff00,
     'blue': 0x0000ff
