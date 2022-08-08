@@ -2,7 +2,7 @@ import discord
 from typing import *
 
 
-class MyModal(discord.ui.Modal):
+"""class MyModal(discord.ui.Modal):
     def __init__(self, options, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if options < 2: options = 2
@@ -15,33 +15,58 @@ class MyModal(discord.ui.Modal):
         i = 0
         for option in self.children:
             i += 1
-            content += f'\n{i} - {option.value}'
+            content += f'{i} - {option.value}'
         await interaction.response.send_message(content=content, view=None)  # placeholder for button voting or sth
-
+"""
 
 emotes = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '0️⃣']
 
 
-class PollButton(discord.ui.Button):
-    def __init__(self, order):
+class OptionButton(discord.ui.Button):
+    def __init__(self, order, public):
         self.order = order
-        super().__init__(emoji=emotes[self.order])
+        self.votes = 0
+        self.public = public
+        l = '0' if self.public else ' ❔'
+        super().__init__(label=l, emoji=emotes[self.order])
 
     async def callback(self, interaction: discord.Interaction) -> None:
         for child in self.view.children:
             child.disabled = True
-        await interaction.response.send_message(
-            content=f'Użytkownik {interaction.user} zagłosował na opcję nr {self.order + 1}!',
-            view=self.view
-        )
+        self.votes += 1
+        if self.public:
+            self.view.children[-1].disabled = False
+            self.view.children[-1].voters[self.order].append(interaction.user.mention)
+            self.label = self.votes
+        await interaction.response.edit_message(view=self.view)
+
+
+class VotersButton(discord.ui.Button):
+    def __init__(self, opt_count):
+        super().__init__(label='List of voters', emoji='📜', style=discord.ButtonStyle.primary)
+        self.voters: List[List] = [[] for i in range(opt_count)]
+
+    async def callback(self, interaction: discord.Interaction):
+        content = 'Lista użytkowników którzy zagłosowali:'
+
+        for i in range(len(self.voters)):
+            if self.voters[i]:
+                content += f'\n{emotes[i]} : '
+                for voter in self.voters[i]:
+                    content += f'\n - {voter}'
+                content += '\n'
+
+        await interaction.response.send_message(content=content, ephemeral=True)
 
 
 class PollView(discord.ui.View):
-    def __init__(self, opt_count: int):
+    def __init__(self, opt_count: int, public: bool):
         super().__init__()
-        for opt in range(opt_count):
-            self.add_item(PollButton(order=opt))
 
+        for opt in range(opt_count):
+            self.add_item(OptionButton(order=opt, public=public))
+        if public:
+            self.add_item(VotersButton(opt_count=opt_count))
 
 def init(tree):
     @tree.command(
@@ -50,6 +75,7 @@ def init(tree):
     )
     async def __command_poll(
             interaction: discord.Interaction,
+            public: bool,
             title: str,
             opt1: str,
             opt2: str,
@@ -73,6 +99,6 @@ def init(tree):
                 content += f'\n{emotes[i]} - {option}'
                 i += 1
 
-        view = PollView(opt_count=i)
+        view = PollView(opt_count=i, public=public)
         await interaction.response.send_message(content=content, view=view)
 
