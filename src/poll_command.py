@@ -19,19 +19,19 @@ class MyModal(discord.ui.Modal):
         await interaction.response.send_message(content=content, view=None)  # placeholder for button voting or sth
 
 
-emotes = [':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:', ':eight:', ':nine:', ':zero:']
+emotes = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '0️⃣']
 
 
 class PollButton(discord.ui.Button):
     def __init__(self, order):
         self.order = order
-        super().__init__(emoji=discord.PartialEmoji(name=':one:'))
+        super().__init__(emoji=emotes[self.order])
 
     async def callback(self, interaction: discord.Interaction) -> None:
         for child in self.view.children:
             child.disabled = True
         await interaction.response.send_message(
-            content=f'Użytkownik {interaction.user} zagłosował na opcję nr {self.order}!',
+            content=f'Użytkownik {interaction.user} zagłosował na opcję nr {self.order + 1}!',
             view=self.view
         )
 
