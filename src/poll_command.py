@@ -27,27 +27,27 @@ class OptionButton(discord.ui.Button):
         self.order = order
         self.votes = 0
         self.public = public
-        l = '0' if self.public else ' ❔'
-        super().__init__(label=l, emoji=emotes[self.order])
+        super().__init__(label='0' if self.public else ' ?', emoji=emotes[self.order])
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        for child in self.view.children:
-            child.disabled = True
-        self.votes += 1
-        if self.public:
-            self.view.children[-1].disabled = False
-            self.view.children[-1].voters[self.order].append(interaction.user.mention)
-            self.label = self.votes
-        await interaction.response.edit_message(view=self.view)
+        if interaction.user.mention in self.view.voters:
+            await interaction.response.send_message(content='Already voted', ephemeral=True)
+        else:
+            self.view.voters.append(interaction.user.mention)
+            self.votes += 1
+            if self.public:
+                self.view.children[-1].voters[self.order].append(interaction.user.mention)
+                self.label = self.votes
+            await interaction.response.edit_message(view=self.view)
 
 
 class VotersButton(discord.ui.Button):
     def __init__(self, opt_count):
         super().__init__(label='List of voters', emoji='📜', style=discord.ButtonStyle.primary)
-        self.voters: List[List] = [[] for i in range(opt_count)]
+        self.voters = [[] for i in range(opt_count)]
 
     async def callback(self, interaction: discord.Interaction):
-        content = 'Lista użytkowników którzy zagłosowali:'
+        content = 'List of this poll\'s voters:'
 
         for i in range(len(self.voters)):
             if self.voters[i]:
@@ -61,12 +61,14 @@ class VotersButton(discord.ui.Button):
 
 class PollView(discord.ui.View):
     def __init__(self, opt_count: int, public: bool):
-        super().__init__()
+        super().__init__(timeout=None)
+        self.voters = []
 
         for opt in range(opt_count):
             self.add_item(OptionButton(order=opt, public=public))
         if public:
             self.add_item(VotersButton(opt_count=opt_count))
+
 
 def init(tree):
     @tree.command(
@@ -101,4 +103,3 @@ def init(tree):
 
         view = PollView(opt_count=i, public=public)
         await interaction.response.send_message(content=content, view=view)
-
