@@ -99,7 +99,6 @@ class PollView(discord.ui.View):
             self.add_item(VotersButton(opt_count=opt_count))
 
     async def on_timeout(self) -> None:
-        print("TIMEOUT")
         m = 0
         option = ''
         s = 0

@@ -6,6 +6,7 @@ import poll_command
 import voice_commands
 import typing_speedrun
 import calculator_command
+import add_and_reset
 # COMMAND TREE IMPORTS
 import role
 
@@ -25,7 +26,7 @@ poll_command.init(tree)
 typing_speedrun.init(tree, client)
 voice_commands.init(tree)
 calculator_command.init(tree)
-
+add_and_reset.init(tree)
 
 # TESTS
 
