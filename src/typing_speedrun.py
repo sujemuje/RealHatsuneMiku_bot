@@ -2,7 +2,7 @@ import discord
 import time
 
 
-def init(tree, client):
+def init(tree):
 
     @tree.command(
         name='typing_speedrun',
@@ -20,7 +20,7 @@ def init(tree, client):
         time_limit = 15.0
 
         TIME_S = time.time()
-        msg = await client.wait_for('message', check=check, timeout=time_limit)
+        msg = await interaction.client.wait_for('message', check=check, timeout=time_limit)
         TIME_E = time.time()
 
         while msg.content.lower() != string:
@@ -28,7 +28,7 @@ def init(tree, client):
             time_limit -= time_delta
 
             TIME_S = time.time()
-            msg = await client.wait_for('message', check=check, timeout=time_limit)
+            msg = await interaction.client.wait_for('message', check=check, timeout=time_limit)
             TIME_E = time.time()
 
         time_delta = TIME_E - TIME_S

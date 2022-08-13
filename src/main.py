@@ -1,5 +1,7 @@
+# GENERAL IMPORTS
 import os
 import discord
+import aiohttp
 import custom_client
 # COMMAND IMPORTS
 import poll_command
@@ -7,8 +9,9 @@ import voice_commands
 import typing_speedrun
 import calculator_command
 import add_and_reset
+import image_command
 # COMMAND TREE IMPORTS
-import role
+import role_tree
 
 
 # CLIENT AND COMMAND TREE
@@ -17,16 +20,17 @@ import role
 intents = discord.Intents.all()
 client = custom_client.Client(intents=intents)
 tree = discord.app_commands.CommandTree(client=client)
-tree.add_command(role.group_role)
+tree.add_command(role_tree.group_role)
 
 
 # INITS
 
 poll_command.init(tree)
-typing_speedrun.init(tree, client)
+typing_speedrun.init(tree)
 voice_commands.init(tree)
 calculator_command.init(tree)
 add_and_reset.init(tree)
+image_command.init(tree)
 
 # TESTS
 
