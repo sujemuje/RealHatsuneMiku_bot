@@ -16,6 +16,12 @@ def init(tree):
             async with session.get(f'https://api.rule34.xxx/index.php?page=dapi&pid={random.randint(1, 20)}&s=post&q=index&tags={tag}&json=1') as resp:
                 posts: list = await resp.json()
                 posts.sort(key=lambda i: i['score'], reverse=True)
+                message = f"Randomly searched for tag **{tag.capitalize()}**. Here are few best results: \n"
+                i = 0
                 for post in posts:
-                    print(post['score'])
+                    message += f'\timage link = {post["file_url"]}, score = {post["score"]}\n'
+                    i += 1
+                    if i == 7:
+                        break
+                await interaction.response.send_message(message)
 
